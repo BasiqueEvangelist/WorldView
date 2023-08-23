@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "worldview",
+	"version": "${version}",
+	"name": "WorldView",
+	"description": "Embed the world in an oωo component",
+	"authors": [
+		"BasiqueEvangelist"
+	],
+	"contact": {
+		"sources": "https://github.com/BasiqueEvangelist/WorldView"
+	},
+	"license": "MPL-2.0",
+	"icon": "assets/worldview/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"me.basiqueevangelist.worldview.WorldView"
+		]
+	},
+	"mixins": [
+		"worldview.mixins.json"
+	],
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://wispforest.io/discord"
+			},
+			"badges": [
+				"library"
+			]
+		}
+	},
+	"depends": {
+		"fabricloader": ">=0.14.22",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
