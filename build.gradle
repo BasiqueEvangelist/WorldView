@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'maven-publish'
+	id 'io.github.juuxel.loom-vineflower' version '1.11.0'
 }
 
 version = project.mod_version
@@ -36,6 +37,8 @@ dependencies {
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
+
+	include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-beta.11")))
 
 	modImplementation "io.wispforest:owo-lib:0.11.2-pre.9+multiwindow+1.20"
 

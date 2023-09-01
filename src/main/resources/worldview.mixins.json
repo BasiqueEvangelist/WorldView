@@ -1,14 +1,21 @@
 {
-	"required": true,
-	"package": "me.basiqueevangelist.worldview.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"client": [
-		"MinecraftClientMixin",
-		"WindowMixin"
-	]
+    "required": true,
+    "package": "me.basiqueevangelist.worldview.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "client": [
+        "CameraAccessor",
+        "LivingEntityRendererMixin",
+        "MinecraftClientAccessor",
+        "MinecraftClientMixin",
+        "PostEffectProcessorAccessor",
+        "PostEffectProcessorMixin",
+        "WindowMixin",
+        "WorldRendererAccessor",
+        "WorldRendererMixin"
+    ]
 }
