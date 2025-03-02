@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class WorldView implements ClientModInitializer {
-	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(new Identifier("worldview", "world_view"), VertexFormats.POSITION_COLOR);
+	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("worldview", "world_view"), VertexFormats.POSITION_COLOR);
 
     public static final Logger LOGGER = LoggerFactory.getLogger("worldview");
 
@@ -25,7 +25,7 @@ public class WorldView implements ClientModInitializer {
 				literal("uwu")
 					.then(literal("freeze_camera")
 						.executes(context -> {
-							new WorldViewWindow();
+							new WorldViewWindow().open();
 							return 1;
 						}))
 			);

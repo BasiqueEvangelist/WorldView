@@ -9,7 +9,8 @@ import net.minecraft.client.MinecraftClient;
 
 public class WorldViewWindow extends OwoWindow<FlowLayout> {
     public WorldViewWindow() {
-        super(640, 480, "World View", MinecraftClient.getInstance().getWindow().getHandle());
+        size(640, 480);
+        title("World View");
     }
 
     @Override

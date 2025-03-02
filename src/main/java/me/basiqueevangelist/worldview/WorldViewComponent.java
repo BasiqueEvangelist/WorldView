@@ -6,11 +6,9 @@ import com.mojang.blaze3d.systems.VertexSorter;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Size;
-import io.wispforest.owo.ui.util.GlDebugUtils;
 import io.wispforest.owo.ui.util.OwoGlUtil;
 import io.wispforest.owo.ui.window.context.CurrentWindowContext;
 import me.basiqueevangelist.worldview.mixin.CameraAccessor;
-import me.basiqueevangelist.worldview.mixin.MinecraftClientAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
@@ -21,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL32;
 
 import java.util.ArrayList;
@@ -89,8 +88,6 @@ public class WorldViewComponent extends BaseComponent {
 
     @Override
     public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        float tickDelta = client.isPaused() ? ((MinecraftClientAccessor) client).getPausedTickDelta() : partialTicks;
-
         try (var ignored = GlDebugUtils.pushGroup("Drawing world into FB for " + this)) {
             int oldFb = GL32.glGetInteger(GL32.GL_DRAW_FRAMEBUFFER_BINDING);
 
@@ -106,8 +103,8 @@ public class WorldViewComponent extends BaseComponent {
 
             GlStateManager._disableScissorTest();
 
-            RenderSystem.getModelViewStack().push();
-            RenderSystem.getModelViewStack().loadIdentity();
+            RenderSystem.getModelViewStack().pushMatrix();
+            RenderSystem.getModelViewStack().identity();
             RenderSystem.applyModelViewMatrix();
 
             Camera camera = client.gameRenderer.getCamera();
@@ -134,17 +131,20 @@ public class WorldViewComponent extends BaseComponent {
                 MatrixStack matrices = new MatrixStack();
                 matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(camera.getPitch()));
                 matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(camera.getYaw() + 180.0F));
-                Matrix3f matrix3f = new Matrix3f(matrices.peek().getNormalMatrix()).invert();
-                RenderSystem.setInverseViewRotationMatrix(matrix3f);
+
+                Matrix4f cameraRotation = new Matrix4f().rotation(camera.getRotation().conjugate(new Quaternionf()));
+
+//                Matrix3f matrix3f = new Matrix3f(matrices.peek().getNormalMatrix()).invert();
+//                RenderSystem.setInverseViewRotationMatrix(matrix3f);
                 this.client
                     .worldRenderer
-                    .setupFrustum(matrices, camera.getPos(), client.gameRenderer.getBasicProjectionMatrix(fov));
-                client.worldRenderer.render(matrices, tickDelta, 0, false, camera, client.gameRenderer, client.gameRenderer.getLightmapTextureManager(), matrix4f);
+                    .setupFrustum(camera.getPos(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov));
+                client.worldRenderer.render(client.getRenderTickCounter(), false, camera, client.gameRenderer, client.gameRenderer.getLightmapTextureManager(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov));
                 ((CameraAccessor) camera).invokeSetPos(oldPos);
                 ((CameraAccessor) camera).invokeSetRotation(oldYaw, oldPitch);
             }
 
-            RenderSystem.getModelViewStack().pop();
+            RenderSystem.getModelViewStack().popMatrix();
             RenderSystem.applyModelViewMatrix();
             GlStateManager._glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, oldFb);
             GlStateManager._viewport(viewportX, viewportY, viewportW, viewportH);
@@ -157,12 +157,11 @@ public class WorldViewComponent extends BaseComponent {
         RenderSystem.disableBlend();
         RenderSystem.setShaderTexture(0, framebuffer.getColorAttachment());
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferBuilder.vertex(matrix4f, x, y, 0).texture(0, 1).next();
-        bufferBuilder.vertex(matrix4f, x, y + height, 0).texture(0, 0).next();
-        bufferBuilder.vertex(matrix4f, x + width, y + height, 0).texture(1, 0).next();
-        bufferBuilder.vertex(matrix4f, x + width, y, 0).texture(1, 1).next();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.vertex(matrix4f, x, y, 0).texture(0, 1);
+        bufferBuilder.vertex(matrix4f, x, y + height, 0).texture(0, 0);
+        bufferBuilder.vertex(matrix4f, x + width, y + height, 0).texture(1, 0);
+        bufferBuilder.vertex(matrix4f, x + width, y, 0).texture(1, 1);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
     }
 

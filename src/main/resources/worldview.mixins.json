@@ -10,7 +10,6 @@
     "client": [
         "CameraAccessor",
         "LivingEntityRendererMixin",
-        "MinecraftClientAccessor",
         "MinecraftClientMixin",
         "PostEffectProcessorAccessor",
         "PostEffectProcessorMixin",
