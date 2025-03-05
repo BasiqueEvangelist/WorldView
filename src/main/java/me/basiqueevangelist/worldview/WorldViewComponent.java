@@ -20,6 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL32;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class WorldViewComponent extends BaseComponent {
     private float yaw = client.gameRenderer.getCamera().getYaw();
     private float pitch = client.gameRenderer.getCamera().getPitch();
 
+    private double fov = client.options.getFov().getValue();
+
     public Vec3d position() {
         return position;
     }
@@ -48,6 +51,10 @@ public class WorldViewComponent extends BaseComponent {
 
     public float pitch() {
         return pitch;
+    }
+
+    public double fov() {
+        return fov;
     }
 
     public WorldViewComponent position(Vec3d position) {
@@ -63,6 +70,20 @@ public class WorldViewComponent extends BaseComponent {
     public WorldViewComponent pitch(float pitch) {
         this.pitch = pitch;
         return this;
+    }
+
+    public WorldViewComponent fov(double fov) {
+        this.fov = fov;
+        return this;
+    }
+
+    protected void moveBy(float f, float g, float h) {
+        var rotation = new Quaternionf();
+        rotation.rotationYXZ((float) Math.PI - yaw * (float) (Math.PI / 180.0), -pitch * (float) (Math.PI / 180.0), 0.0F);
+
+        Vector3f vector3f = new Vector3f(h, g, -f).rotate(rotation);
+
+        position(new Vec3d(position().x + vector3f.x, position().y + vector3f.y, position().z + vector3f.z));
     }
 
     @Override
@@ -109,7 +130,6 @@ public class WorldViewComponent extends BaseComponent {
 
             Camera camera = client.gameRenderer.getCamera();
             MatrixStack matrixStack = new MatrixStack();
-            double fov = this.client.options.getFov().getValue();
             matrixStack.multiplyPositionMatrix(client.gameRenderer.getBasicProjectionMatrix(fov));
 
             Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();

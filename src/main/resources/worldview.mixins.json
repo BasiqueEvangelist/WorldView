@@ -9,6 +9,7 @@
     },
     "client": [
         "CameraAccessor",
+        "KeyBindingAccessor",
         "LivingEntityRendererMixin",
         "MinecraftClientMixin",
         "PostEffectProcessorAccessor",

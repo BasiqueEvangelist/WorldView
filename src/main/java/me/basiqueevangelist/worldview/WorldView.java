@@ -1,9 +1,12 @@
 package me.basiqueevangelist.worldview;
 
 import io.wispforest.owo.shader.GlProgram;
+import io.wispforest.owo.ui.window.OpenWindows;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -29,6 +32,14 @@ public class WorldView implements ClientModInitializer {
 							return 1;
 						}))
 			);
+		});
+
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+			OpenWindows.windows().forEach(x -> {
+				if (x instanceof WorldViewWindow) {
+					MinecraftClient.getInstance().send(x::close);
+				}
+			});
 		});
 	}
 }
