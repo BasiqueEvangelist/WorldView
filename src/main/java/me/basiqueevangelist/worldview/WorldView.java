@@ -1,7 +1,7 @@
 package me.basiqueevangelist.worldview;
 
 import io.wispforest.owo.shader.GlProgram;
-import io.wispforest.owo.ui.window.OpenWindows;
+import me.basiqueevangelist.windowapi.OpenWindows;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;

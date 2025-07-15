@@ -6,8 +6,8 @@ import com.mojang.blaze3d.systems.VertexSorter;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Size;
-import io.wispforest.owo.ui.util.OwoGlUtil;
-import io.wispforest.owo.ui.window.context.CurrentWindowContext;
+import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
+import me.basiqueevangelist.windowapi.util.GlUtil;
 import me.basiqueevangelist.worldview.mixin.CameraAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
@@ -133,7 +133,7 @@ public class WorldViewComponent extends BaseComponent {
             matrixStack.multiplyPositionMatrix(client.gameRenderer.getBasicProjectionMatrix(fov));
 
             Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-            try (var ignored1 = OwoGlUtil.setProjectionMatrix(matrix4f, VertexSorter.BY_DISTANCE)) {
+            try (var ignored1 = GlUtil.setProjectionMatrix(matrix4f, VertexSorter.BY_DISTANCE)) {
 //                camera.update(
 //                    this.client.world,
 //                    (Entity)(this.client.getCameraEntity() == null ? this.client.player : this.client.getCameraEntity()),

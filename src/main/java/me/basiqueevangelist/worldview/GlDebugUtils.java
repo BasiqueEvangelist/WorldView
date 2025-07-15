@@ -1,6 +1,6 @@
 package me.basiqueevangelist.worldview;
 
-import io.wispforest.owo.util.InfallibleCloseable;
+import me.basiqueevangelist.windowapi.util.InfallibleCloseable;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.KHRDebug;
 

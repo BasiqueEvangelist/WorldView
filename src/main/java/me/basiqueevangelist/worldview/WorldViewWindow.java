@@ -4,9 +4,9 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.window.OwoWindow;
 import me.basiqueevangelist.worldview.mixin.KeyBindingAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -24,7 +24,7 @@ public class WorldViewWindow extends OwoWindow<FlowLayout> {
 
     @Override
     protected OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.create(this, Containers::verticalFlow);
+        return OwoUIAdapter.createWithoutScreen(0, 0, scaledWidth(), scaledHeight(), Containers::verticalFlow);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class WorldViewWindow extends OwoWindow<FlowLayout> {
     }
 
     @Override
-    public void mouseMoved(double xDelta, double yDelta) {
+    public void lockedMouseMoved(double xDelta, double yDelta) {
         worldView.yaw((float) (worldView.yaw() + xDelta*0.3f));
         worldView.pitch((float) (worldView.pitch() + yDelta*0.3f));
     }
@@ -71,7 +71,7 @@ public class WorldViewWindow extends OwoWindow<FlowLayout> {
     }
 
     @Override
-    public void render() {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         if (hasKeyDown(MinecraftClient.getInstance().options.forwardKey)) {
             worldView.moveBy(0.5f * MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration(), 0, 0);
         }
@@ -88,7 +88,8 @@ public class WorldViewWindow extends OwoWindow<FlowLayout> {
             worldView.moveBy(0, 0, 0.5f * MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration());
         }
 
-        super.render();
+
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
