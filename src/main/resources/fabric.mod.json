@@ -8,6 +8,8 @@
 		"BasiqueEvangelist"
 	],
 	"contact": {
+		"homepage": "https://modrinth.com/mod/multicam",
+		"issues": "https://github.com/BasiqueEvangelist/MultiCam/issues",
 		"sources": "https://github.com/BasiqueEvangelist/MultiCam"
 	},
 	"license": "MPL-2.0",
