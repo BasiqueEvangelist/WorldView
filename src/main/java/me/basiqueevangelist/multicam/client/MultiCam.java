@@ -30,7 +30,7 @@ public class MultiCam implements ClientModInitializer {
 				literal("multicam")
 					.requires(x -> ServerData.canUse(x.hasPermissionLevel(2)))
 					.executes(context -> {
-						new CameraAngleWindow().open();
+						new CameraWindow().open();
 						return 1;
 					})
 			);
@@ -43,7 +43,7 @@ public class MultiCam implements ClientModInitializer {
 
 	public static void closeAllWindows() {
 		OpenWindows.windows().forEach(x -> {
-			if (x instanceof CameraAngleWindow) {
+			if (x instanceof CameraWindow) {
 				MinecraftClient.getInstance().send(x::close);
 			}
 		});

@@ -13,14 +13,14 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
 
-public class CameraAngleWindow extends OwoWindow<FlowLayout> {
+public class CameraWindow extends OwoWindow<FlowLayout> {
     private final WorldViewComponent worldView = new WorldViewComponent();
 
     private NativeResource focusCb;
 
-    public CameraAngleWindow() {
+    public CameraWindow() {
         size(640, 480);
-        title("Camera Angle");
+        title("Camera");
     }
 
     @Override
