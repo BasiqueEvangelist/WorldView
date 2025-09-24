@@ -22,7 +22,9 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     public static final List<CameraWindow> CAMERAS = new ArrayList<>();
 
     private NativeResource focusCb;
-    private int cameraIndex;
+    private final int cameraIndex;
+
+    private long prevDrawNanos = 0;
 
     public CameraWindow() {
         size(640, 480);
@@ -92,6 +94,15 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
 
     private boolean hasKeyDown(KeyBinding key) {
         return InputUtil.isKeyPressed(handle(), ((KeyBindingAccessor) key).getBoundKey().getCode());
+    }
+
+    @Override
+    public void draw() {
+        if (prevDrawNanos + 1_000_000_000 / MultiCam.FPS_TARGET > System.nanoTime()) return;
+
+        prevDrawNanos = System.nanoTime();
+
+        super.draw();
     }
 
     @Override

@@ -388,7 +388,7 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         deltaY = 0;
     }
 
-    public final void draw() {
+    public void draw() {
         if (closed()) return;
 
         try (var ignored = CurrentWindowContext.setCurrent(this)) {

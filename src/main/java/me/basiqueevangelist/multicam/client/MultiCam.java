@@ -1,5 +1,6 @@
 package me.basiqueevangelist.multicam.client;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.windowapi.OpenWindows;
 import net.fabricmc.api.ClientModInitializer;
@@ -12,17 +13,16 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class MultiCam implements ClientModInitializer {
 	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("multicam", "world_view"), VertexFormats.POSITION_COLOR);
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("MultiCam");
+	public static int FPS_TARGET = Integer.MAX_VALUE;
 
 	@Override
 	public void onInitializeClient() {
-		LOGGER.info("\uD83C\uDF0F \uD83D\uDC40");
-
 		ServerData.init();
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
@@ -33,6 +33,12 @@ public class MultiCam implements ClientModInitializer {
 						new CameraWindow().open();
 						return 1;
 					})
+					.then(literal("fps_target")
+						.then(argument("target", IntegerArgumentType.integer(1))
+							.executes(ctx -> {
+								FPS_TARGET = IntegerArgumentType.getInteger(ctx, "target");
+								return 0;
+							})))
 			);
 		});
 
