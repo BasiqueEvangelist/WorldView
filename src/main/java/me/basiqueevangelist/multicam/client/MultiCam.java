@@ -19,7 +19,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 public class MultiCam implements ClientModInitializer {
 	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("multicam", "world_view"), VertexFormats.POSITION_COLOR);
 
-	public static int FPS_TARGET = Integer.MAX_VALUE;
+	public static int FPS_TARGET = 60;
 
 	@Override
 	public void onInitializeClient() {
