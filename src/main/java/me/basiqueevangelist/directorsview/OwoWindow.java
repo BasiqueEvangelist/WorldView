@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.ParentComponent;

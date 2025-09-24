@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview.mixin;
+package me.basiqueevangelist.directorsview.mixin;
 
 import net.minecraft.client.gl.PostEffectProcessor;
 import net.minecraft.client.render.WorldRenderer;

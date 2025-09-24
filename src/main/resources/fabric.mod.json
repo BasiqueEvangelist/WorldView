@@ -1,41 +1,39 @@
 {
 	"schemaVersion": 1,
-	"id": "worldview",
+	"id": "directorsview",
 	"version": "${version}",
-	"name": "WorldView",
-	"description": "Embed the world in an oωo component",
+	"name": "Director's View",
+	"description": "Look at the world from many camera angles",
 	"authors": [
 		"BasiqueEvangelist"
 	],
 	"contact": {
-		"sources": "https://github.com/BasiqueEvangelist/WorldView"
+		"sources": "https://github.com/BasiqueEvangelist/DirectorsView"
 	},
 	"license": "MPL-2.0",
-	"icon": "assets/worldview/icon.png",
+	"icon": "assets/directorsview/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"client": [
-			"me.basiqueevangelist.worldview.WorldView"
+			"me.basiqueevangelist.directorsview.DirectorsView"
 		]
 	},
 	"mixins": [
-		"worldview.mixins.json",
+		"directorsview.mixins.json",
 		"window-api.mixins.json"
 	],
 	"custom": {
 		"modmenu": {
 			"links": {
 				"modmenu.discord": "https://wispforest.io/discord"
-			},
-			"badges": [
-				"library"
-			]
+			}
 		}
 	},
 	"depends": {
 		"fabricloader": ">=0.15",
 		"minecraft": "~1.21.1",
 		"java": ">=17",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"owo": "*"
 	}
 }

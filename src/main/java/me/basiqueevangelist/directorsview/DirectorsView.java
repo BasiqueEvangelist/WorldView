@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
 import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.windowapi.OpenWindows;
@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-public class WorldView implements ClientModInitializer {
-	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("worldview", "world_view"), VertexFormats.POSITION_COLOR);
+public class DirectorsView implements ClientModInitializer {
+	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("directorsview", "world_view"), VertexFormats.POSITION_COLOR);
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("worldview");
+    public static final Logger LOGGER = LoggerFactory.getLogger("Director's View");
 
 	@Override
 	public void onInitializeClient() {
@@ -25,18 +25,17 @@ public class WorldView implements ClientModInitializer {
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
-				literal("uwu")
-					.then(literal("freeze_camera")
-						.executes(context -> {
-							new WorldViewWindow().open();
-							return 1;
-						}))
+				literal("directorsview")
+					.executes(context -> {
+						new CameraAngleWindow().open();
+						return 1;
+					})
 			);
 		});
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
 			OpenWindows.windows().forEach(x -> {
-				if (x instanceof WorldViewWindow) {
+				if (x instanceof CameraAngleWindow) {
 					MinecraftClient.getInstance().send(x::close);
 				}
 			});

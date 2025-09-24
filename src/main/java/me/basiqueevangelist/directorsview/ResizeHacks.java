@@ -1,7 +1,7 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
-import me.basiqueevangelist.worldview.mixin.PostEffectProcessorAccessor;
-import me.basiqueevangelist.worldview.mixin.WorldRendererAccessor;
+import me.basiqueevangelist.directorsview.mixin.PostEffectProcessorAccessor;
+import me.basiqueevangelist.directorsview.mixin.WorldRendererAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.PostEffectPass;
 import net.minecraft.client.gl.PostEffectProcessor;

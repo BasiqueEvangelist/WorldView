@@ -1,6 +1,6 @@
-package me.basiqueevangelist.worldview.mixin;
+package me.basiqueevangelist.directorsview.mixin;
 
-import me.basiqueevangelist.worldview.WorldViewComponent;
+import me.basiqueevangelist.directorsview.WorldViewComponent;
 import net.minecraft.client.util.Window;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

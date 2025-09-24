@@ -1,10 +1,10 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
-import me.basiqueevangelist.worldview.mixin.KeyBindingAccessor;
+import me.basiqueevangelist.directorsview.mixin.KeyBindingAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -12,14 +12,14 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
 
-public class WorldViewWindow extends OwoWindow<FlowLayout> {
+public class CameraAngleWindow extends OwoWindow<FlowLayout> {
     private final WorldViewComponent worldView = new WorldViewComponent();
 
     private NativeResource focusCb;
 
-    public WorldViewWindow() {
+    public CameraAngleWindow() {
         size(640, 480);
-        title("World View");
+        title("Camera Angle");
     }
 
     @Override

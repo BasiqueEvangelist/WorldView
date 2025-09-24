@@ -1,6 +1,6 @@
-package me.basiqueevangelist.worldview.mixin;
+package me.basiqueevangelist.directorsview.mixin;
 
-import me.basiqueevangelist.worldview.DelegatingFramebuffer;
+import me.basiqueevangelist.directorsview.DelegatingFramebuffer;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.PostEffectProcessor;
 import org.spongepowered.asm.mixin.Mixin;

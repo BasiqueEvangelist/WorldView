@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
 import me.basiqueevangelist.windowapi.util.InfallibleCloseable;
 import org.lwjgl.opengl.GL;

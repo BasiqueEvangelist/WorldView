@@ -5,7 +5,7 @@
         "dstrgb": "1-srcalpha"
     },
     "vertex": "position_tex",
-    "fragment": "worldview:world_view",
+    "fragment": "directorsview:world_view",
     "attributes": [
         "Position",
         "UV0"

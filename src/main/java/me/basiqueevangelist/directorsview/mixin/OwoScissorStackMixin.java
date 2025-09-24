@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview.mixin;
+package me.basiqueevangelist.directorsview.mixin;
 
 import io.wispforest.owo.ui.util.ScissorStack;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;

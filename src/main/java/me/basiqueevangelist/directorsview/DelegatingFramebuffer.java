@@ -1,4 +1,4 @@
-package me.basiqueevangelist.worldview;
+package me.basiqueevangelist.directorsview;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
