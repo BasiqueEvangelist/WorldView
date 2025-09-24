@@ -3,7 +3,7 @@
 	"id": "directorsview",
 	"version": "${version}",
 	"name": "Director's View",
-	"description": "Look at the world from many camera angles",
+	"description": "Render multiple camera angles for your stream",
 	"authors": [
 		"BasiqueEvangelist"
 	],
