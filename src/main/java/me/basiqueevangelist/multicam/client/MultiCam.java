@@ -23,9 +23,12 @@ public class MultiCam implements ClientModInitializer {
 	public void onInitializeClient() {
 		LOGGER.info("\uD83C\uDF0F \uD83D\uDC40");
 
+		ServerData.init();
+
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
 				literal("multicam")
+					.requires(x -> ServerData.canUse(x.hasPermissionLevel(2)))
 					.executes(context -> {
 						new CameraAngleWindow().open();
 						return 1;
@@ -34,11 +37,15 @@ public class MultiCam implements ClientModInitializer {
 		});
 
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-			OpenWindows.windows().forEach(x -> {
-				if (x instanceof CameraAngleWindow) {
-					MinecraftClient.getInstance().send(x::close);
-				}
-			});
+			closeAllWindows();
+		});
+	}
+
+	public static void closeAllWindows() {
+		OpenWindows.windows().forEach(x -> {
+			if (x instanceof CameraAngleWindow) {
+				MinecraftClient.getInstance().send(x::close);
+			}
 		});
 	}
 }

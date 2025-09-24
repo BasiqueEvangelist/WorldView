@@ -14,6 +14,9 @@
 	"icon": "assets/multicam/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"main": [
+			"me.basiqueevangelist.multicam.common.MultiCamCommon"
+		],
 		"client": [
             "me.basiqueevangelist.multicam.client.MultiCam"
 		]
@@ -34,6 +37,7 @@
 		"minecraft": "~1.21.1",
 		"java": ">=17",
 		"fabric-api": "*",
-		"owo": "*"
+		"owo": "*",
+		"fabric-permissions-api-v0": ">=0.3.1"
 	}
 }

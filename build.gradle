@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version
+version = "${project.mod_version}+${project.minecraft_base_version}"
 group = project.maven_group
 
 base {
@@ -39,6 +39,8 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	modImplementation "io.wispforest:owo-lib:0.12.15.4+1.21"
+
+	modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_perms_api}")
 
 	modLocalRuntime "maven.modrinth:sodium:mc1.21.1-0.6.9-fabric"
 
