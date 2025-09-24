@@ -13,14 +13,37 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CameraWindow extends OwoWindow<FlowLayout> {
     private final WorldViewComponent worldView = new WorldViewComponent();
 
+    public static final List<CameraWindow> CAMERAS = new ArrayList<>();
+
     private NativeResource focusCb;
+    private int cameraIndex;
 
     public CameraWindow() {
         size(640, 480);
-        title("Camera");
+
+        int i = 0;
+        boolean found = false;
+        for (i = 0; i < CAMERAS.size(); i++) {
+            if (CAMERAS.get(i) == null) {
+                found = true;
+                CAMERAS.set(i, this);
+                break;
+            }
+        }
+
+        if (!found) {
+            CAMERAS.add(this);
+        }
+
+        this.cameraIndex = i;
+
+        title("Camera #" + (i + 1));
     }
 
     @Override
@@ -96,6 +119,8 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     @Override
     public void close() {
         super.close();
+
+        CAMERAS.set(cameraIndex, null);
 
         if (focusCb != null) {
             focusCb.close();
