@@ -388,7 +388,7 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         deltaY = 0;
     }
 
-    public final void present() {
+    public final void draw() {
         if (closed()) return;
 
         try (var ignored = CurrentWindowContext.setCurrent(this)) {
@@ -427,21 +427,24 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
 
             framebuffer.endWrite();
         }
+    }
 
-        try (var ignored = GlUtil.setContext(handle)) {
-            // This code intentionally doesn't use Minecraft's RenderSystem
-            // class, as it caches GL state that is invalid on this context.
-            GL32.glBindFramebuffer(GL32.GL_READ_FRAMEBUFFER, localFramebuffer);
-            GL32.glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, 0);
+    void present() {
+        if (closed()) return;
 
-            GL32.glClearColor(1, 1, 1, 1);
-            GL32.glClear(GL32.GL_COLOR_BUFFER_BIT | GL32.GL_DEPTH_BUFFER_BIT);
-            GL32.glBlitFramebuffer(0, 0, this.framebufferWidth, this.framebufferHeight, 0, 0, this.framebufferWidth, this.framebufferHeight, GL32.GL_COLOR_BUFFER_BIT, GL32.GL_NEAREST);
+        GLFW.glfwMakeContextCurrent(this.handle);
+        // This code intentionally doesn't use Minecraft's RenderSystem
+        // class, as it caches GL state that is invalid on this context.
+        GL32.glBindFramebuffer(GL32.GL_READ_FRAMEBUFFER, localFramebuffer);
+        GL32.glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, 0);
 
-            // Intentionally doesn't poll events so that all events are on the main window
-            Tessellator.getInstance().clear();
-            GLFW.glfwSwapBuffers(this.handle);
-        }
+        GL32.glClearColor(1, 1, 1, 1);
+        GL32.glClear(GL32.GL_COLOR_BUFFER_BIT | GL32.GL_DEPTH_BUFFER_BIT);
+        GL32.glBlitFramebuffer(0, 0, this.framebufferWidth, this.framebufferHeight, 0, 0, this.framebufferWidth, this.framebufferHeight, GL32.GL_COLOR_BUFFER_BIT, GL32.GL_NEAREST);
+
+        // Intentionally doesn't poll events so that all events are on the main window
+        Tessellator.getInstance().clear();
+        GLFW.glfwSwapBuffers(this.handle);
     }
 
     @Override

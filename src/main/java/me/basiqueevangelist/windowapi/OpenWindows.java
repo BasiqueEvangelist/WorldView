@@ -1,7 +1,9 @@
 package me.basiqueevangelist.windowapi;
 
+import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +32,12 @@ public final class OpenWindows {
     @ApiStatus.Internal
     public static void renderAll() {
         for (AltWindow window : WINDOWS) {
+            window.draw();
+        }
+
+        for (AltWindow window : WINDOWS) {
             window.present();
         }
+        GLFW.glfwMakeContextCurrent(MinecraftClient.getInstance().getWindow().getHandle());
     }
 }
