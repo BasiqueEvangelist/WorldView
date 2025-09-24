@@ -108,20 +108,22 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         float prevFrameDuration = ((float) System.nanoTime() - prevDrawNanos) / 1_000_000_000f * 20;
 
-        if (hasKeyDown(MinecraftClient.getInstance().options.forwardKey)) {
-            worldView.moveBy(0.5f * prevFrameDuration, 0, 0);
-        }
+        if (cursorLocked()) {
+            if (hasKeyDown(MinecraftClient.getInstance().options.forwardKey)) {
+                worldView.moveBy(0.5f * prevFrameDuration, 0, 0);
+            }
 
-        if (hasKeyDown(MinecraftClient.getInstance().options.backKey)) {
-            worldView.moveBy(-0.5f * prevFrameDuration, 0, 0);
-        }
+            if (hasKeyDown(MinecraftClient.getInstance().options.backKey)) {
+                worldView.moveBy(-0.5f * prevFrameDuration, 0, 0);
+            }
 
-        if (hasKeyDown(MinecraftClient.getInstance().options.leftKey)) {
-            worldView.moveBy(0, 0, -0.5f * prevFrameDuration);
-        }
+            if (hasKeyDown(MinecraftClient.getInstance().options.leftKey)) {
+                worldView.moveBy(0, 0, -0.5f * prevFrameDuration);
+            }
 
-        if (hasKeyDown(MinecraftClient.getInstance().options.rightKey)) {
-            worldView.moveBy(0, 0, 0.5f * prevFrameDuration);
+            if (hasKeyDown(MinecraftClient.getInstance().options.rightKey)) {
+                worldView.moveBy(0, 0, 0.5f * prevFrameDuration);
+            }
         }
 
 
