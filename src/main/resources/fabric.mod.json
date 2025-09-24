@@ -15,7 +15,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"client": [
-			"me.basiqueevangelist.multicam.MultiCam"
+            "me.basiqueevangelist.multicam.client.MultiCam"
 		]
 	},
 	"mixins": [

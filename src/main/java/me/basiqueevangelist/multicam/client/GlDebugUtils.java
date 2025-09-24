@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam;
+package me.basiqueevangelist.multicam.client;
 
 import me.basiqueevangelist.windowapi.util.InfallibleCloseable;
 import org.lwjgl.opengl.GL;

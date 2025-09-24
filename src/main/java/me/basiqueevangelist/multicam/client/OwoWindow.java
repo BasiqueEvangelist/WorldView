@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam;
+package me.basiqueevangelist.multicam.client;
 
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.ParentComponent;

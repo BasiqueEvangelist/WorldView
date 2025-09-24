@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam;
+package me.basiqueevangelist.multicam.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -8,7 +8,7 @@ import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Size;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
 import me.basiqueevangelist.windowapi.util.GlUtil;
-import me.basiqueevangelist.multicam.mixin.CameraAccessor;
+import me.basiqueevangelist.multicam.mixin.client.CameraAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;

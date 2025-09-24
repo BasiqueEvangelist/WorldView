@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam;
+package me.basiqueevangelist.multicam.client;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

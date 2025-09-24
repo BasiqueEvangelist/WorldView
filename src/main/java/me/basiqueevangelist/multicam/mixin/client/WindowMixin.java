@@ -1,6 +1,6 @@
-package me.basiqueevangelist.multicam.mixin;
+package me.basiqueevangelist.multicam.mixin.client;
 
-import me.basiqueevangelist.multicam.WorldViewComponent;
+import me.basiqueevangelist.multicam.client.WorldViewComponent;
 import net.minecraft.client.util.Window;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

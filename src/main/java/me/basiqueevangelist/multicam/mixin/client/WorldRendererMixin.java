@@ -1,7 +1,7 @@
-package me.basiqueevangelist.multicam.mixin;
+package me.basiqueevangelist.multicam.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import me.basiqueevangelist.multicam.WorldViewComponent;
+import me.basiqueevangelist.multicam.client.WorldViewComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.Entity;

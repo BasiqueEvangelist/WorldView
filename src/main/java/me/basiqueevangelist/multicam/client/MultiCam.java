@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam;
+package me.basiqueevangelist.multicam.client;
 
 import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.windowapi.OpenWindows;

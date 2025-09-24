@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam.mixin;
+package me.basiqueevangelist.multicam.mixin.client;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

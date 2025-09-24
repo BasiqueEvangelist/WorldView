@@ -8,15 +8,15 @@
         "defaultRequire": 1
     },
     "client": [
-        "CameraAccessor",
-        "KeyBindingAccessor",
-        "LivingEntityRendererMixin",
-        "MinecraftClientMixin",
-        "PostEffectProcessorAccessor",
-        "PostEffectProcessorMixin",
-        "WindowMixin",
-        "WorldRendererAccessor",
-        "WorldRendererMixin",
-        "OwoScissorStackMixin"
+        "client.CameraAccessor",
+        "client.KeyBindingAccessor",
+        "client.LivingEntityRendererMixin",
+        "client.MinecraftClientMixin",
+        "client.PostEffectProcessorAccessor",
+        "client.PostEffectProcessorMixin",
+        "client.WindowMixin",
+        "client.WorldRendererAccessor",
+        "client.WorldRendererMixin",
+        "client.OwoScissorStackMixin"
     ]
 }
