@@ -1,25 +1,25 @@
 {
 	"schemaVersion": 1,
-	"id": "directorsview",
+	"id": "multicam",
 	"version": "${version}",
-	"name": "Director's View",
+	"name": "MultiCam",
 	"description": "Render multiple camera angles for your stream",
 	"authors": [
 		"BasiqueEvangelist"
 	],
 	"contact": {
-		"sources": "https://github.com/BasiqueEvangelist/DirectorsView"
+		"sources": "https://github.com/BasiqueEvangelist/MultiCam"
 	},
 	"license": "MPL-2.0",
-	"icon": "assets/directorsview/icon.png",
+	"icon": "assets/multicam/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"client": [
-			"me.basiqueevangelist.directorsview.DirectorsView"
+			"me.basiqueevangelist.multicam.MultiCam"
 		]
 	},
 	"mixins": [
-		"directorsview.mixins.json",
+		"multicam.mixins.json",
 		"window-api.mixins.json"
 	],
 	"custom": {

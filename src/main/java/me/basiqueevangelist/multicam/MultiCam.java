@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
 import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.windowapi.OpenWindows;
@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-public class DirectorsView implements ClientModInitializer {
-	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("directorsview", "world_view"), VertexFormats.POSITION_COLOR);
+public class MultiCam implements ClientModInitializer {
+	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("multicam", "world_view"), VertexFormats.POSITION_COLOR);
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("Director's View");
+    public static final Logger LOGGER = LoggerFactory.getLogger("MultiCam");
 
 	@Override
 	public void onInitializeClient() {
@@ -25,7 +25,7 @@ public class DirectorsView implements ClientModInitializer {
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
-				literal("directorsview")
+				literal("multicam")
 					.executes(context -> {
 						new CameraAngleWindow().open();
 						return 1;

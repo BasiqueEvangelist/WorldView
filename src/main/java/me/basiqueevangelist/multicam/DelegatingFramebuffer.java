@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

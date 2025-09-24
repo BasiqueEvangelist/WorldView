@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.ParentComponent;

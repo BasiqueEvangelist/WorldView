@@ -1,6 +1,6 @@
-package me.basiqueevangelist.directorsview.mixin;
+package me.basiqueevangelist.multicam.mixin;
 
-import me.basiqueevangelist.directorsview.WorldViewComponent;
+import me.basiqueevangelist.multicam.WorldViewComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview.mixin;
+package me.basiqueevangelist.multicam.mixin;
 
 import net.minecraft.client.render.Camera;
 import net.minecraft.util.math.Vec3d;

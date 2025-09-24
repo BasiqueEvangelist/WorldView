@@ -1,7 +1,7 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
-import me.basiqueevangelist.directorsview.mixin.PostEffectProcessorAccessor;
-import me.basiqueevangelist.directorsview.mixin.WorldRendererAccessor;
+import me.basiqueevangelist.multicam.mixin.PostEffectProcessorAccessor;
+import me.basiqueevangelist.multicam.mixin.WorldRendererAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.PostEffectPass;
 import net.minecraft.client.gl.PostEffectProcessor;

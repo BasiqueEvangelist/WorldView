@@ -1,6 +1,6 @@
-package me.basiqueevangelist.directorsview.mixin;
+package me.basiqueevangelist.multicam.mixin;
 
-import me.basiqueevangelist.directorsview.DelegatingFramebuffer;
+import me.basiqueevangelist.multicam.DelegatingFramebuffer;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.PostEffectProcessor;
 import org.spongepowered.asm.mixin.Mixin;

@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
 import me.basiqueevangelist.windowapi.util.InfallibleCloseable;
 import org.lwjgl.opengl.GL;

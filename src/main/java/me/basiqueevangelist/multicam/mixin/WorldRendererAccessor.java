@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview.mixin;
+package me.basiqueevangelist.multicam.mixin;
 
 import net.minecraft.client.gl.PostEffectProcessor;
 import net.minecraft.client.render.WorldRenderer;

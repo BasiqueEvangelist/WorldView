@@ -1,6 +1,6 @@
-package me.basiqueevangelist.directorsview.mixin;
+package me.basiqueevangelist.multicam.mixin;
 
-import me.basiqueevangelist.directorsview.WorldViewComponent;
+import me.basiqueevangelist.multicam.WorldViewComponent;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.entity.LivingEntity;

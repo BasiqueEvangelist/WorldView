@@ -1,4 +1,4 @@
-package me.basiqueevangelist.directorsview;
+package me.basiqueevangelist.multicam;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -8,7 +8,7 @@ import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Size;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
 import me.basiqueevangelist.windowapi.util.GlUtil;
-import me.basiqueevangelist.directorsview.mixin.CameraAccessor;
+import me.basiqueevangelist.multicam.mixin.CameraAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
@@ -172,7 +172,7 @@ public class WorldViewComponent extends BaseComponent {
             ResizeHacks.resize(client.gameRenderer, null);
         }
 
-        DirectorsView.WORLD_VIEW_PROGRAM.use();
+        MultiCam.WORLD_VIEW_PROGRAM.use();
         RenderSystem.disableBlend();
         RenderSystem.setShaderTexture(0, framebuffer.getColorAttachment());
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
