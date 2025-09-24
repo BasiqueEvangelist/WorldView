@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
 
@@ -63,7 +64,7 @@ public class CameraAngleWindow extends OwoWindow<FlowLayout> {
     @Override
     public void lockedMouseMoved(double xDelta, double yDelta) {
         worldView.yaw((float) (worldView.yaw() + xDelta*0.3f));
-        worldView.pitch((float) (worldView.pitch() + yDelta*0.3f));
+        worldView.pitch(MathHelper.clamp((float) (worldView.pitch() + yDelta*0.3f), -90.0F, 90.0F));
     }
 
     private boolean hasKeyDown(KeyBinding key) {
