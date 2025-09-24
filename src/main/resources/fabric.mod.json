@@ -19,7 +19,8 @@
 		]
 	},
 	"mixins": [
-		"worldview.mixins.json"
+		"worldview.mixins.json",
+		"window-api.mixins.json"
 	],
 	"custom": {
 		"modmenu": {

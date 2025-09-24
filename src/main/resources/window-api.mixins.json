@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "me.basiqueevangelist.windowapi.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"client": [
+		"MinecraftClientMixin"
+	]
+}

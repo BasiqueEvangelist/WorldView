@@ -40,8 +40,6 @@ dependencies {
 
 	modImplementation "io.wispforest:owo-lib:0.12.15.4+1.21"
 
-	modImplementation "me.basiqueevangelist.windowapi:window-api:0.1.0-mavenlocal.2"
-
 	modLocalRuntime "maven.modrinth:sodium:mc1.21.1-0.6.9-fabric"
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
