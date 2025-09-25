@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraWindow extends OwoWindow<FlowLayout> {
-    private final WorldViewComponent worldView = new WorldViewComponent();
+    final WorldViewComponent worldView = new WorldViewComponent();
 
     public static final List<CameraWindow> CAMERAS = new ArrayList<>();
 
