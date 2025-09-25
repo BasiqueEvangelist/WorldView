@@ -5,10 +5,12 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
 import io.wispforest.owo.ui.core.Sizing;
 import me.basiqueevangelist.multicam.mixin.client.KeyBindingAccessor;
+import me.basiqueevangelist.windowapi.WindowIcon;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
@@ -46,6 +48,8 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
         this.cameraIndex = i;
 
         title("Camera #" + (i + 1));
+
+        icon(WindowIcon.fromResources(Identifier.of("multicam", "icon.png")));
     }
 
     @Override
