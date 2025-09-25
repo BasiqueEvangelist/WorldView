@@ -12,6 +12,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.NativeResource;
 
@@ -27,6 +29,12 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     private final int cameraIndex;
 
     private long prevDrawNanos = 0;
+
+    private @Nullable Vec3d orbitPoint = null;
+    private float orbitY = 0;
+    private float orbitRadius = 0;
+    private float orbitPeriod = 0;
+    private float orbitAngle = 0;
 
     public CameraWindow() {
         size(640, 480);
@@ -65,6 +73,8 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
         rootComponent.mouseUp().subscribe((mouseX, mouseY, button) -> {
             if (!cursorLocked()) {
                 lockCursor();
+
+                orbitPoint = null;
             }
 
             return true;
@@ -102,15 +112,7 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
 
     @Override
     public void draw() {
-        if (prevDrawNanos + 1_000_000_000 / MultiCam.FPS_TARGET > System.nanoTime()) return;
-
-        super.draw();
-        prevDrawNanos = System.nanoTime();
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        float prevFrameDuration = ((float) System.nanoTime() - prevDrawNanos) / 1_000_000_000f * 20;
+        float prevFrameDuration = MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration();
 
         if (cursorLocked()) {
             float multiplier = 1;
@@ -138,8 +140,27 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
             }
         }
 
+        if (orbitPoint != null) {
+            orbitAngle += (float) (Math.PI * 2 * (prevFrameDuration / 20 / orbitPeriod));
 
-        super.render(context, mouseX, mouseY, delta);
+            float x = (float) (orbitPoint.x + Math.cos(orbitAngle) * orbitRadius);
+            float z = (float) (orbitPoint.z + Math.sin(orbitAngle) * orbitRadius);
+
+            worldView.position(new Vec3d(x, orbitY, z));
+            worldView.lookAt(orbitPoint);
+        }
+
+        if (prevDrawNanos + 1_000_000_000 / MultiCam.FPS_TARGET > System.nanoTime()) return;
+
+        super.draw();
+        prevDrawNanos = System.nanoTime();
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        float prevFrameDuration = ((float) System.nanoTime() - prevDrawNanos) / 1_000_000_000f * 20;
+
+        super.render(context, mouseX, mouseY, prevFrameDuration);
     }
 
     @Override
@@ -152,5 +173,13 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
             focusCb.close();
             focusCb = null;
         }
+    }
+
+    public void beginOrbit(Vec3d pos, float period, float y, float radius) {
+        this.orbitPoint = pos;
+        this.orbitPeriod = period;
+        this.orbitY = y;
+        this.orbitRadius = radius;
+        this.orbitAngle = 0;
     }
 }

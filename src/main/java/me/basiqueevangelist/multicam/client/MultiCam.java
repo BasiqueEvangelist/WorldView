@@ -3,6 +3,7 @@ package me.basiqueevangelist.multicam.client;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.multicam.client.command.MoveCameraCommand;
+import me.basiqueevangelist.multicam.client.command.OrbitCameraCommand;
 import me.basiqueevangelist.multicam.client.command.ZoomCameraCommand;
 import me.basiqueevangelist.windowapi.OpenWindows;
 import net.fabricmc.api.ClientModInitializer;
@@ -41,6 +42,7 @@ public class MultiCam implements ClientModInitializer {
 							})))
 					.then(MoveCameraCommand.build())
 					.then(ZoomCameraCommand.build())
+					.then(OrbitCameraCommand.build())
 			);
 		});
 

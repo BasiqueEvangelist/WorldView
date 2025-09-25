@@ -15,6 +15,7 @@ import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
@@ -84,6 +85,14 @@ public class WorldViewComponent extends BaseComponent {
         Vector3f vector3f = new Vector3f(h, g, -f).rotate(rotation);
 
         position(new Vec3d(position().x + vector3f.x, position().y + vector3f.y, position().z + vector3f.z));
+    }
+
+    public void lookAt(Vec3d target) {
+        Vec3d rad = target.subtract(position());
+
+        yaw((float) (Math.atan2(rad.z, rad.x) * 180 / Math.PI - 90));
+        pitch((float) (-Math.atan2(rad.y, new Vec3d(rad.x, 0, rad.z).length()) * 180 / Math.PI));
+
     }
 
     @Override

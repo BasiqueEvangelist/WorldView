@@ -177,6 +177,8 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         glfwSetFramebufferSizeCallback(handle, stowAndReturn(GLFWFramebufferSizeCallback.create((window, width, height) -> {
             if (this.framebufferWidth == width && this.framebufferHeight == height) return;
 
+            if (width == 0 || height == 0) return;
+
             this.framebufferWidth = width;
             this.framebufferHeight = height;
 
