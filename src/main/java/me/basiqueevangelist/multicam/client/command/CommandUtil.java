@@ -53,7 +53,7 @@ public class CommandUtil {
                         public <A extends Animatable<A>> void configureAnimation(CommandContext<FabricClientCommandSource> ctx, AnimatableProperty<A> property, A target, float distance) {
                             property.animate(
                                 IntegerArgumentType.getInteger(ctx, "duration"),
-                                Easing.CUBIC,
+                                Easing.LINEAR,
                                 target
                             )
                                 .forwards();
@@ -68,7 +68,7 @@ public class CommandUtil {
 
                             property.animate(
                                 duration,
-                                Easing.CUBIC,
+                                Easing.LINEAR,
                                 target
                             )
                                 .forwards();
