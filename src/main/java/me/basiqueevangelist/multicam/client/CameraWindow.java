@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraWindow extends OwoWindow<FlowLayout> {
-    final WorldViewComponent worldView = new WorldViewComponent();
+    public final WorldViewComponent worldView = new WorldViewComponent();
 
     public static final List<CameraWindow> CAMERAS = new ArrayList<>();
 
@@ -79,7 +79,7 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
         });
 
         rootComponent.mouseScroll().subscribe((mouseX, mouseY, amount) -> {
-            worldView.fov(worldView.fov() + -amount * 5);
+            worldView.fov(worldView.fov() + -(float)amount * 5);
             return true;
         });
 

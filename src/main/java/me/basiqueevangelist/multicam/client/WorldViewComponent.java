@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.VertexSorter;
 import io.wispforest.owo.ui.base.BaseComponent;
+import io.wispforest.owo.ui.core.AnimatableProperty;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Size;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
@@ -34,55 +35,65 @@ public class WorldViewComponent extends BaseComponent {
     Framebuffer framebuffer = null;
     private final List<BiConsumer<Integer, Integer>> resizeListeners = new ArrayList<>();
 
-    private Vec3d position = client.gameRenderer.getCamera().getPos();
-    private float yaw = client.gameRenderer.getCamera().getYaw();
-    private float pitch = client.gameRenderer.getCamera().getPitch();
+    public final AnimatableProperty<AnimatableVec3d> position = AnimatableProperty.of(new AnimatableVec3d(client.gameRenderer.getCamera().getPos()));
+    public final AnimatableProperty<AnimatableFloat> yaw = AnimatableProperty.of(new AnimatableFloat(client.gameRenderer.getCamera().getYaw()));
+    public final AnimatableProperty<AnimatableFloat> pitch = AnimatableProperty.of(new AnimatableFloat(client.gameRenderer.getCamera().getPitch()));
 
-    private double fov = client.options.getFov().getValue();
+    public final AnimatableProperty<AnimatableFloat> fov = AnimatableProperty.of(new AnimatableFloat(client.options.getFov().getValue()));
 
     public Vec3d position() {
-        return position;
+        return position.get().inner();
     }
 
     public float yaw() {
-        return yaw;
+        return yaw.get().inner();
     }
 
     public float pitch() {
-        return pitch;
+        return pitch.get().inner();
     }
 
-    public double fov() {
-        return fov;
+    public float fov() {
+        return fov.get().inner();
     }
 
     public WorldViewComponent position(Vec3d position) {
-        this.position = position;
+        this.position.set(new AnimatableVec3d(position));
         return this;
     }
 
     public WorldViewComponent yaw(float yaw) {
-        this.yaw = yaw;
+        this.yaw.set(new AnimatableFloat(yaw));
         return this;
     }
 
     public WorldViewComponent pitch(float pitch) {
-        this.pitch = pitch;
+        this.pitch.set(new AnimatableFloat(pitch));
         return this;
     }
 
-    public WorldViewComponent fov(double fov) {
-        this.fov = fov;
+    public WorldViewComponent fov(float fov) {
+        this.fov.set(new AnimatableFloat(fov));
         return this;
     }
 
     protected void moveBy(float f, float g, float h) {
         var rotation = new Quaternionf();
-        rotation.rotationYXZ((float) Math.PI - yaw * (float) (Math.PI / 180.0), -pitch * (float) (Math.PI / 180.0), 0.0F);
+        rotation.rotationYXZ((float) Math.PI - yaw() * (float) (Math.PI / 180.0), -pitch() * (float) (Math.PI / 180.0), 0.0F);
 
         Vector3f vector3f = new Vector3f(h, g, -f).rotate(rotation);
 
         position(new Vec3d(position().x + vector3f.x, position().y + vector3f.y, position().z + vector3f.z));
+    }
+
+    @Override
+    public void update(float delta, int mouseX, int mouseY) {
+        super.update(delta, mouseX, mouseY);
+
+        this.position.update(delta);
+        this.yaw.update(delta);
+        this.pitch.update(delta);
+        this.fov.update(delta);
     }
 
     @Override
@@ -129,7 +140,7 @@ public class WorldViewComponent extends BaseComponent {
 
             Camera camera = client.gameRenderer.getCamera();
             MatrixStack matrixStack = new MatrixStack();
-            matrixStack.multiplyPositionMatrix(client.gameRenderer.getBasicProjectionMatrix(fov));
+            matrixStack.multiplyPositionMatrix(client.gameRenderer.getBasicProjectionMatrix(fov()));
 
             Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
             try (var ignored1 = GlUtil.setProjectionMatrix(matrix4f, VertexSorter.BY_DISTANCE)) {
@@ -144,8 +155,8 @@ public class WorldViewComponent extends BaseComponent {
                 Vec3d oldPos = camera.getPos();
                 float oldYaw = camera.getYaw();
                 float oldPitch = camera.getPitch();
-                ((CameraAccessor) camera).invokeSetPos(this.position);
-                ((CameraAccessor) camera).invokeSetRotation(this.yaw, this.pitch);
+                ((CameraAccessor) camera).invokeSetPos(this.position());
+                ((CameraAccessor) camera).invokeSetRotation(this.yaw(), this.pitch());
 
                 MatrixStack matrices = new MatrixStack();
                 matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(camera.getPitch()));
@@ -157,8 +168,8 @@ public class WorldViewComponent extends BaseComponent {
 //                RenderSystem.setInverseViewRotationMatrix(matrix3f);
                 this.client
                     .worldRenderer
-                    .setupFrustum(camera.getPos(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov));
-                client.worldRenderer.render(client.getRenderTickCounter(), false, camera, client.gameRenderer, client.gameRenderer.getLightmapTextureManager(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov));
+                    .setupFrustum(camera.getPos(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov()));
+                client.worldRenderer.render(client.getRenderTickCounter(), false, camera, client.gameRenderer, client.gameRenderer.getLightmapTextureManager(), cameraRotation, client.gameRenderer.getBasicProjectionMatrix(fov()));
                 ((CameraAccessor) camera).invokeSetPos(oldPos);
                 ((CameraAccessor) camera).invokeSetRotation(oldYaw, oldPitch);
             }

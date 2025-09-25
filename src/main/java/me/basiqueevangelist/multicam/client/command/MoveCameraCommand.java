@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam.client;
+package me.basiqueevangelist.multicam.client.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -6,14 +6,16 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import me.basiqueevangelist.multicam.client.argument.ClientPosArgument;
-import me.basiqueevangelist.multicam.client.argument.ClientRotationArgumentType;
-import me.basiqueevangelist.multicam.client.argument.ClientVec3ArgumentType;
+import me.basiqueevangelist.multicam.client.AnimatableFloat;
+import me.basiqueevangelist.multicam.client.AnimatableVec3d;
+import me.basiqueevangelist.multicam.client.CameraWindow;
+import me.basiqueevangelist.multicam.client.command.argument.ClientPosArgument;
+import me.basiqueevangelist.multicam.client.command.argument.ClientRotationArgumentType;
+import me.basiqueevangelist.multicam.client.command.argument.ClientVec3ArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -32,42 +34,63 @@ import java.util.stream.Stream;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-public class TpCameraCommand {
-    public static ArgumentBuilder<FabricClientCommandSource, ?> build(CommandRegistryAccess buildCtx) {
-        return literal("tp")
-            .then(argument("camera", IntegerArgumentType.integer(1))
-                .then(argument("position", ClientVec3ArgumentType.vec3(true))
-                    .executes(TpCameraCommand::tpWithoutAngle)
-                    .then(argument("rotation", ClientRotationArgumentType.rotation())
-                        .executes(TpCameraCommand::tpWithAngle))));
-    }
+public class MoveCameraCommand {
+    public static ArgumentBuilder<FabricClientCommandSource, ?> build() {
+        var cameraNode = argument("camera", IntegerArgumentType.integer(1));
 
-    private static int tpWithoutAngle(CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
-        CameraWindow camera = MultiCam.getCamera(ctx);
+        CommandUtil.addInAt(cameraNode, configurer -> literal("to")
+            .then(argument("position", ClientVec3ArgumentType.vec3(true))
+                .executes(ctx -> {
+                    CameraWindow camera = CommandUtil.getCamera(ctx);
 
-        FabricClientCommandSource cameraSrc = getSourceForCamera(ctx.getSource(), camera);
-        Vec3d pos = ClientVec3ArgumentType.getPosArgument(ctx, "position").toAbsolutePos(cameraSrc);
+                    FabricClientCommandSource cameraSrc = getSourceForCamera(ctx.getSource(), camera);
+                    Vec3d pos = ClientVec3ArgumentType.getPosArgument(ctx, "position").toAbsolutePos(cameraSrc);
 
-        camera.worldView.position(pos);
+                    configurer.configureAnimation(
+                        ctx,
+                        camera.worldView.position,
+                        new AnimatableVec3d(pos),
+                        (float) pos.distanceTo(camera.worldView.position())
+                    );
 
-        return 0;
-    }
+                    return 0;
+                })
+                .then(argument("rotation", ClientRotationArgumentType.rotation())
+                    .executes(ctx -> {
+                        CameraWindow camera = CommandUtil.getCamera(ctx);
 
-    private static int tpWithAngle(CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
-        CameraWindow camera = MultiCam.getCamera(ctx);
+                        FabricClientCommandSource cameraSrc = getSourceForCamera(ctx.getSource(), camera);
 
-        FabricClientCommandSource cameraSrc = getSourceForCamera(ctx.getSource(), camera);
+                        Vec3d pos = ClientVec3ArgumentType.getPosArgument(ctx, "position").toAbsolutePos(cameraSrc);
+                        ClientPosArgument rotArg = ClientRotationArgumentType.getRotation(ctx, "rotation");
 
-        Vec3d pos = ClientVec3ArgumentType.getPosArgument(ctx, "position").toAbsolutePos(cameraSrc);
-        ClientPosArgument rotArg = ClientRotationArgumentType.getRotation(ctx, "rotation");
+                        Vec2f rot = rotArg.toAbsoluteRotation(cameraSrc);
 
-        Vec2f rot = rotArg.toAbsoluteRotation(cameraSrc);
+                        configurer.configureAnimation(
+                            ctx,
+                            camera.worldView.position,
+                            new AnimatableVec3d(pos),
+                            (float) pos.distanceTo(camera.worldView.position())
+                        );
 
-        camera.worldView.position(pos);
-        camera.worldView.pitch(rot.x);
-        camera.worldView.yaw(rot.y);
+                        configurer.configureAnimation(
+                            ctx,
+                            camera.worldView.pitch,
+                            new AnimatableFloat(rot.x),
+                            Math.abs(rot.x - camera.worldView.pitch())
+                        );
 
-        return 0;
+                        configurer.configureAnimation(
+                            ctx,
+                            camera.worldView.yaw,
+                            new AnimatableFloat(rot.y),
+                            Math.abs(rot.y - camera.worldView.yaw())
+                        );
+
+                        return 0;
+                    }))));
+
+        return literal("move").then(cameraNode);
     }
 
     private static FabricClientCommandSource getSourceForCamera(FabricClientCommandSource delegate, CameraWindow camera) {

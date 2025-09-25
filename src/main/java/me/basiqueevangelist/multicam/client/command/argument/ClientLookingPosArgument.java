@@ -1,4 +1,4 @@
-package me.basiqueevangelist.multicam.client.argument;
+package me.basiqueevangelist.multicam.client.command.argument;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;

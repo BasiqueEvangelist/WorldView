@@ -1,7 +1,6 @@
-package me.basiqueevangelist.multicam.client.argument;
+package me.basiqueevangelist.multicam.client.command.argument;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
