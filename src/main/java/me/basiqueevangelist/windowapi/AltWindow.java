@@ -21,6 +21,7 @@ import net.minecraft.util.Pair;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -46,8 +47,14 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
     private int framebufferHeight;
 
     private long handle = 0;
-    private Framebuffer framebuffer;
-    private int localFramebuffer = 0;
+
+    private Framebuffer framebuffer1;
+    private int localFramebuffer1 = 0;
+    private Framebuffer framebuffer2;
+    private int localFramebuffer2 = 0;
+
+    private volatile boolean usingFramebuffer2;
+
     private final List<NativeResource> disposeList = new ArrayList<>();
     private final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -70,8 +77,12 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
 
     private final Event<WindowFramebufferResized> framebufferResizedEvents = WindowFramebufferResized.newEvent();
 
-    public AltWindow() {
+    private final Thread presentThread;
 
+    private volatile boolean closing = false;
+
+    public AltWindow() {
+        presentThread = new Thread(this::runPresent);
     }
 
     //region User-implementable stuff
@@ -144,7 +155,6 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
             }
 
             glfwMakeContextCurrent(this.handle);
-            glfwSwapInterval(0);
         }
 
         applyIcon();
@@ -155,7 +165,8 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         this.framebufferWidth = framebufferWidthArr[0];
         this.framebufferHeight = framebufferHeightArr[0];
 
-        this.framebuffer = new SimpleFramebuffer(this.framebufferWidth, this.framebufferHeight, true, MinecraftClient.IS_SYSTEM_MAC);
+        this.framebuffer1 = new SimpleFramebuffer(this.framebufferWidth, this.framebufferHeight, true, MinecraftClient.IS_SYSTEM_MAC);
+        this.framebuffer2 = new SimpleFramebuffer(this.framebufferWidth, this.framebufferHeight, true, MinecraftClient.IS_SYSTEM_MAC);
 
         try (var ignored = GlUtil.setContext(this.handle)) {
             GlDebug.enableDebug(client.options.glDebugVerbosity, true);
@@ -183,9 +194,11 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
             this.framebufferHeight = height;
 
             try (var ignored = GlUtil.setContext(client.getWindow().getHandle())) {
-                framebuffer.delete();
+                framebuffer1.delete();
+                framebuffer2.delete();
 
-                this.framebuffer = new SimpleFramebuffer(width, height, true, MinecraftClient.IS_SYSTEM_MAC);
+                this.framebuffer1 = new SimpleFramebuffer(width, height, true, MinecraftClient.IS_SYSTEM_MAC);
+                this.framebuffer2 = new SimpleFramebuffer(width, height, true, MinecraftClient.IS_SYSTEM_MAC);
             }
 
             initLocalFramebuffer();
@@ -278,6 +291,7 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         }
 
         OpenWindows.add(this);
+        presentThread.start();
     }
 
     public boolean cursorLocked() {
@@ -340,17 +354,24 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
 
     private void initLocalFramebuffer() {
         try (var ignored = GlUtil.setContext(this.handle)) {
-            if (localFramebuffer != 0) {
-                GL32.glDeleteFramebuffers(localFramebuffer);
-            }
+            if (localFramebuffer1 != 0) GL32.glDeleteFramebuffers(localFramebuffer1);
+            if (localFramebuffer2 != 0) GL32.glDeleteFramebuffers(localFramebuffer2);
 
-            this.localFramebuffer = GL32.glGenFramebuffers();
-            GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, this.localFramebuffer);
-            GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL32.GL_TEXTURE_2D, this.framebuffer.getColorAttachment(), 0);
+            this.localFramebuffer1 = GL32.glGenFramebuffers();
+            GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, this.localFramebuffer1);
+            GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL32.GL_TEXTURE_2D, this.framebuffer1.getColorAttachment(), 0);
 
             int status = GL32.glCheckFramebufferStatus(GL32.GL_FRAMEBUFFER);
             if (status != GL32.GL_FRAMEBUFFER_COMPLETE)
-                throw new IllegalStateException("Failed to create local framebuffer!");
+                throw new IllegalStateException("Failed to create local framebuffer 1!");
+
+            this.localFramebuffer2 = GL32.glGenFramebuffers();
+            GL32.glBindFramebuffer(GL32.GL_FRAMEBUFFER, this.localFramebuffer2);
+            GL32.glFramebufferTexture2D(GL32.GL_FRAMEBUFFER, GL32.GL_COLOR_ATTACHMENT0, GL32.GL_TEXTURE_2D, this.framebuffer2.getColorAttachment(), 0);
+
+            status = GL32.glCheckFramebufferStatus(GL32.GL_FRAMEBUFFER);
+            if (status != GL32.GL_FRAMEBUFFER_COMPLETE)
+                throw new IllegalStateException("Failed to create local framebuffer 2!");
         }
     }
 
@@ -396,7 +417,7 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         try (var ignored = CurrentWindowContext.setCurrent(this)) {
             tickMouse();
 
-            framebuffer().beginWrite(true);
+            writeFramebuffer().beginWrite(true);
 
             RenderSystem.clearColor(0, 0, 0, 0);
             RenderSystem.clear(GL32.GL_COLOR_BUFFER_BIT | GL32.GL_DEPTH_BUFFER_BIT, MinecraftClient.IS_SYSTEM_MAC);
@@ -427,26 +448,33 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
                 RenderSystem.applyModelViewMatrix();
             }
 
-            framebuffer.endWrite();
+            writeFramebuffer().endWrite();
+
+            // We're the only writer anyway
+            //noinspection NonAtomicOperationOnVolatileField
+            usingFramebuffer2 = !usingFramebuffer2;
         }
     }
 
-    void present() {
-        if (closed()) return;
-
+    private void runPresent() {
         GLFW.glfwMakeContextCurrent(this.handle);
-        // This code intentionally doesn't use Minecraft's RenderSystem
-        // class, as it caches GL state that is invalid on this context.
-        GL32.glBindFramebuffer(GL32.GL_READ_FRAMEBUFFER, localFramebuffer);
-        GL32.glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, 0);
+        GL.createCapabilities();
 
-        GL32.glClearColor(1, 1, 1, 1);
-        GL32.glClear(GL32.GL_COLOR_BUFFER_BIT | GL32.GL_DEPTH_BUFFER_BIT);
-        GL32.glBlitFramebuffer(0, 0, this.framebufferWidth, this.framebufferHeight, 0, 0, this.framebufferWidth, this.framebufferHeight, GL32.GL_COLOR_BUFFER_BIT, GL32.GL_NEAREST);
+        while (true) {
+            if (closing) return;
 
-        // Intentionally doesn't poll events so that all events are on the main window
-        Tessellator.getInstance().clear();
-        GLFW.glfwSwapBuffers(this.handle);
+            // This code intentionally doesn't use Minecraft's RenderSystem
+            // class, as it caches GL state that is invalid on this context.
+            GL32.glBindFramebuffer(GL32.GL_READ_FRAMEBUFFER, usingFramebuffer2 ? localFramebuffer1 : localFramebuffer2);
+            GL32.glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, 0);
+
+            GL32.glClearColor(1, 1, 1, 1);
+            GL32.glClear(GL32.GL_COLOR_BUFFER_BIT | GL32.GL_DEPTH_BUFFER_BIT);
+            GL32.glBlitFramebuffer(0, 0, this.framebufferWidth, this.framebufferHeight, 0, 0, this.framebufferWidth, this.framebufferHeight, GL32.GL_COLOR_BUFFER_BIT, GL32.GL_NEAREST);
+
+            // Intentionally doesn't poll events so that all events are on the main window
+            GLFW.glfwSwapBuffers(this.handle);
+        }
     }
 
     @Override
@@ -459,9 +487,8 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
         return framebufferResizedEvents;
     }
 
-    @Override
-    public Framebuffer framebuffer() {
-        return framebuffer;
+    public Framebuffer writeFramebuffer() {
+        return usingFramebuffer2 ? framebuffer2 : framebuffer1;
     }
 
     @Override
@@ -494,14 +521,22 @@ public abstract class AltWindow extends SupportsFeaturesImpl<WindowContext> impl
     }
 
     public void close() {
+        this.closing = true;
+        try {
+            this.presentThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         this.destroyFeatures();
         OpenWindows.remove(this);
 
         try (var ignored = GlUtil.setContext(this.handle)) {
-            GL32.glDeleteFramebuffers(this.localFramebuffer);
+            GL32.glDeleteFramebuffers(this.localFramebuffer1);
+            GL32.glDeleteFramebuffers(this.localFramebuffer2);
         }
 
-        this.framebuffer.delete();
+        this.framebuffer1.delete();
         glfwDestroyWindow(this.handle);
         this.handle = 0;
 

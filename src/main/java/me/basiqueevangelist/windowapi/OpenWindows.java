@@ -34,10 +34,5 @@ public final class OpenWindows {
         for (AltWindow window : WINDOWS) {
             window.draw();
         }
-
-        for (AltWindow window : WINDOWS) {
-            window.present();
-        }
-        GLFW.glfwMakeContextCurrent(MinecraftClient.getInstance().getWindow().getHandle());
     }
 }

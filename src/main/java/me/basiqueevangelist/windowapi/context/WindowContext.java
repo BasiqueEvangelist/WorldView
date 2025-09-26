@@ -9,7 +9,7 @@ public interface WindowContext extends SupportsFeatures<WindowContext> {
     int framebufferWidth();
     int framebufferHeight();
     Event<WindowFramebufferResized> framebufferResized();
-    Framebuffer framebuffer();
+//    Framebuffer framebuffer();
 
     int scaledWidth();
     int scaledHeight();

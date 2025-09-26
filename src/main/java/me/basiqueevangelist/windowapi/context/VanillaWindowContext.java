@@ -50,11 +50,6 @@ public class VanillaWindowContext extends SupportsFeaturesImpl<WindowContext> im
     }
 
     @Override
-    public Framebuffer framebuffer() {
-        return framebuffer;
-    }
-
-    @Override
     public int scaledWidth() {
         return window.getScaledWidth();
     }
