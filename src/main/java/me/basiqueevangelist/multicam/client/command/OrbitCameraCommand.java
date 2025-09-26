@@ -15,7 +15,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 public class OrbitCameraCommand {
     public static ArgumentBuilder<FabricClientCommandSource, ?> build() {
         return literal("orbit")
-            .then(argument("camera", IntegerArgumentType.integer(1))
+            .then(CommandUtil.cameraNode()
                 .then(argument("position", ClientVec3ArgumentType.vec3(true))
                     .then(argument("period", FloatArgumentType.floatArg(0))
                         .executes(ctx -> {

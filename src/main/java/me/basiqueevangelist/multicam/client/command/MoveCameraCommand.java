@@ -17,7 +17,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class MoveCameraCommand {
     public static ArgumentBuilder<FabricClientCommandSource, ?> build() {
-        var cameraNode = argument("camera", IntegerArgumentType.integer(1));
+        var cameraNode = CommandUtil.cameraNode();
 
         CommandUtil.addInAt(cameraNode, configurer -> literal("to")
             .then(argument("position", ClientVec3ArgumentType.vec3(true))

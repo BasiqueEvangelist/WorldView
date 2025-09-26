@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MinecraftClientMixin {
     @Inject(method = "getFramebuffer", at = @At("HEAD"), cancellable = true)
     private void malding(CallbackInfoReturnable<Framebuffer> cir) {
-        if (WorldViewComponent.CURRENT != null) {
-            cir.setReturnValue(WorldViewComponent.CURRENT);
+        if (WorldViewComponent.CURRENT_BUFFER != null) {
+            cir.setReturnValue(WorldViewComponent.CURRENT_BUFFER);
         }
     }
 }

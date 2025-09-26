@@ -11,15 +11,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class WindowMixin {
     @Inject(method = "getFramebufferWidth", at = @At("HEAD"), cancellable = true)
     private void malding(CallbackInfoReturnable<Integer> cir) {
-        if (WorldViewComponent.CURRENT != null) {
-            cir.setReturnValue(WorldViewComponent.CURRENT.textureWidth);
+        if (WorldViewComponent.CURRENT_BUFFER != null) {
+            cir.setReturnValue(WorldViewComponent.CURRENT_BUFFER.textureWidth);
         }
     }
 
     @Inject(method = "getFramebufferHeight", at = @At("HEAD"), cancellable = true)
     private void maldnite(CallbackInfoReturnable<Integer> cir) {
-        if (WorldViewComponent.CURRENT != null) {
-            cir.setReturnValue(WorldViewComponent.CURRENT.textureHeight);
+        if (WorldViewComponent.CURRENT_BUFFER != null) {
+            cir.setReturnValue(WorldViewComponent.CURRENT_BUFFER.textureHeight);
         }
     }
 }

@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LivingEntityRendererMixin {
     @Inject(method = "hasLabel(Lnet/minecraft/entity/LivingEntity;)Z", at = @At("HEAD"), cancellable = true)
     private void makeNameRender(LivingEntity livingEntity, CallbackInfoReturnable<Boolean> cir) {
-        if (livingEntity instanceof ClientPlayerEntity && WorldViewComponent.CURRENT != null)
+        if (livingEntity instanceof ClientPlayerEntity && WorldViewComponent.CURRENT_BUFFER != null)
             cir.setReturnValue(true);
     }
 }

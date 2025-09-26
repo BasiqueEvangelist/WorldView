@@ -40,6 +40,19 @@ public class CommandUtil {
     // TODO: translate.
     public static final SimpleCommandExceptionType NO_SUCH_CAMERA = new SimpleCommandExceptionType(Text.literal("No such camera"));
 
+    public static ArgumentBuilder<FabricClientCommandSource, ?> cameraNode() {
+        return argument("camera", IntegerArgumentType.integer(1))
+            .suggests((ctx, suggestionsBuilder) -> {
+                for (int i = 0; i < CameraWindow.CAMERAS.size(); i++) {
+                    if (CameraWindow.CAMERAS.get(i) != null) {
+                        suggestionsBuilder.suggest(i + 1);
+                    }
+                }
+
+                return suggestionsBuilder.buildFuture();
+            });
+    }
+
     public static CameraWindow getCamera(CommandContext<FabricClientCommandSource> ctx) throws CommandSyntaxException {
         int cameraId = IntegerArgumentType.getInteger(ctx, "camera");
 

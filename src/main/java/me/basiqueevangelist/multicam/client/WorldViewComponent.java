@@ -15,7 +15,6 @@ import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,7 +29,10 @@ import java.util.function.BiConsumer;
 
 public class WorldViewComponent extends BaseComponent {
     @ApiStatus.Internal
-    public static Framebuffer CURRENT = null;
+    public static Framebuffer CURRENT_BUFFER = null;
+
+    @ApiStatus.Internal
+    public static WorldViewComponent CURRENT = null;
 
     private final MinecraftClient client = MinecraftClient.getInstance();
     Framebuffer framebuffer = null;
@@ -41,6 +43,10 @@ public class WorldViewComponent extends BaseComponent {
     public final AnimatableProperty<AnimatableFloat> pitch = AnimatableProperty.of(new AnimatableFloat(client.gameRenderer.getCamera().getPitch()));
 
     public final AnimatableProperty<AnimatableFloat> fov = AnimatableProperty.of(new AnimatableFloat(client.options.getFov().getValue()));
+
+    private boolean disableEntities = false;
+    private boolean disableBlockEntities = false;
+    private boolean disableParticles = false;
 
     public Vec3d position() {
         return position.get().inner();
@@ -56,6 +62,18 @@ public class WorldViewComponent extends BaseComponent {
 
     public float fov() {
         return fov.get().inner();
+    }
+
+    public boolean disableEntities() {
+        return disableEntities;
+    }
+
+    public boolean disableBlockEntities() {
+        return disableBlockEntities;
+    }
+
+    public boolean disableParticles() {
+        return disableParticles;
     }
 
     public WorldViewComponent position(Vec3d position) {
@@ -75,6 +93,21 @@ public class WorldViewComponent extends BaseComponent {
 
     public WorldViewComponent fov(float fov) {
         this.fov.set(new AnimatableFloat(fov));
+        return this;
+    }
+
+    public WorldViewComponent disableEntities(boolean disableEntities) {
+        this.disableEntities = disableEntities;
+        return this;
+    }
+
+    public WorldViewComponent disableBlockEntities(boolean disableBlockEntities) {
+        this.disableBlockEntities = disableBlockEntities;
+        return this;
+    }
+
+    public WorldViewComponent disableParticles(boolean disableParticles) {
+        this.disableParticles = disableParticles;
         return this;
     }
 
@@ -138,7 +171,8 @@ public class WorldViewComponent extends BaseComponent {
 
             framebuffer.beginWrite(true);
 
-            CURRENT = framebuffer;
+            CURRENT_BUFFER = framebuffer;
+            CURRENT = this;
             ResizeHacks.resize(client.gameRenderer, this);
 
             GlStateManager._disableScissorTest();
@@ -188,6 +222,7 @@ public class WorldViewComponent extends BaseComponent {
             GlStateManager._glBindFramebuffer(GL32.GL_DRAW_FRAMEBUFFER, oldFb);
             GlStateManager._viewport(viewportX, viewportY, viewportW, viewportH);
             GlStateManager._enableScissorTest();
+            CURRENT_BUFFER = null;
             CURRENT = null;
             ResizeHacks.resize(client.gameRenderer, null);
         }
