@@ -29,6 +29,7 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     private final int cameraIndex;
 
     private long prevDrawNanos = 0;
+    private long prevFrameDurationNanos = 0;
 
     private @Nullable Vec3d orbitPoint = null;
     private float orbitY = 0;
@@ -150,9 +151,12 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
             worldView.lookAt(orbitPoint);
         }
 
-        if (prevDrawNanos + 1_000_000_000 / MultiCam.FPS_TARGET > System.nanoTime()) return;
+        if (prevDrawNanos + 1_000_000_000 / MultiCam.FPS_TARGET - prevFrameDurationNanos > System.nanoTime()) return;
 
+        long start = System.nanoTime();
         super.draw();
+        this.prevFrameDurationNanos = System.nanoTime() - start;
+
         prevDrawNanos = System.nanoTime();
     }
 
