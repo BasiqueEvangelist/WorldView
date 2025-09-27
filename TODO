@@ -1,0 +1,3 @@
+- remove owo-lib dependency
+- fix Sodium glitches and properly swap out render state
+- fix vanilla compatibility
