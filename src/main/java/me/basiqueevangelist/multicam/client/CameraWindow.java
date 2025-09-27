@@ -120,24 +120,30 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
 
             if (hasKeyDown(MinecraftClient.getInstance().options.sprintKey)) {
                 multiplier = 2;
-            } else if (hasKeyDown(MinecraftClient.getInstance().options.sneakKey)) {
-                multiplier = 0.5f;
             }
 
             if (hasKeyDown(MinecraftClient.getInstance().options.forwardKey)) {
-                worldView.moveBy(multiplier * 0.5f * prevFrameDuration, 0, 0);
+                worldView.moveBy(multiplier * 0.5f * prevFrameDuration, 0, 0, true);
             }
 
             if (hasKeyDown(MinecraftClient.getInstance().options.backKey)) {
-                worldView.moveBy(multiplier * -0.5f * prevFrameDuration, 0, 0);
+                worldView.moveBy(multiplier * -0.5f * prevFrameDuration, 0, 0, true);
             }
 
             if (hasKeyDown(MinecraftClient.getInstance().options.leftKey)) {
-                worldView.moveBy(0, 0, multiplier * -0.5f * prevFrameDuration);
+                worldView.moveBy(0, 0, multiplier * -0.5f * prevFrameDuration, true);
             }
 
             if (hasKeyDown(MinecraftClient.getInstance().options.rightKey)) {
-                worldView.moveBy(0, 0, multiplier * 0.5f * prevFrameDuration);
+                worldView.moveBy(0, 0, multiplier * 0.5f * prevFrameDuration, true);
+            }
+
+            if (hasKeyDown(MinecraftClient.getInstance().options.jumpKey)) {
+                worldView.moveBy(0, multiplier * 0.5f * prevFrameDuration, 0, false);
+            }
+
+            if (hasKeyDown(MinecraftClient.getInstance().options.sneakKey)) {
+                worldView.moveBy(0, multiplier * -0.5f * prevFrameDuration, 0, false);
             }
         }
 

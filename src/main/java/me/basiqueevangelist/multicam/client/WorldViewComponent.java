@@ -111,11 +111,14 @@ public class WorldViewComponent extends BaseComponent {
         return this;
     }
 
-    protected void moveBy(float f, float g, float h) {
-        var rotation = new Quaternionf();
-        rotation.rotationYXZ((float) Math.PI - yaw() * (float) (Math.PI / 180.0), -pitch() * (float) (Math.PI / 180.0), 0.0F);
+    protected void moveBy(float f, float g, float h, boolean rotate) {
+        Vector3f vector3f = new Vector3f(h, g, -f);
 
-        Vector3f vector3f = new Vector3f(h, g, -f).rotate(rotation);
+        if (rotate) {
+            var rotation = new Quaternionf();
+            rotation.rotationYXZ((float) Math.PI - yaw() * (float) (Math.PI / 180.0), -pitch() * (float) (Math.PI / 180.0), 0.0F);
+            vector3f.rotate(rotation);
+        }
 
         position(new Vec3d(position().x + vector3f.x, position().y + vector3f.y, position().z + vector3f.z));
     }
