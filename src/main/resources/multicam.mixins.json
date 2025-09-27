@@ -3,7 +3,8 @@
     "package": "me.basiqueevangelist.multicam.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "CommandManagerMixin"
+        "CommandManagerMixin",
+        "client.OwoUIAdapterMixin"
     ],
     "injectors": {
         "defaultRequire": 1

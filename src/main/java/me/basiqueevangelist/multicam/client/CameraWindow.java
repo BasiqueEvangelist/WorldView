@@ -1,5 +1,6 @@
 package me.basiqueevangelist.multicam.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.OwoUIAdapter;
@@ -24,6 +25,8 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     public final WorldViewComponent worldView = new WorldViewComponent();
 
     public static final List<CameraWindow> CAMERAS = new ArrayList<>();
+
+    public static float PREV_FRAME_DURATION = 0;
 
     private NativeResource focusCb;
     private final int cameraIndex;
@@ -170,7 +173,10 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         float prevFrameDuration = ((float) System.nanoTime() - prevDrawNanos) / 1_000_000_000f * 20;
 
+        PREV_FRAME_DURATION = prevFrameDuration;
+        RenderSystem.disableScissor();
         super.render(context, mouseX, mouseY, prevFrameDuration);
+        PREV_FRAME_DURATION = 0;
     }
 
     @Override
