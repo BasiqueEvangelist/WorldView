@@ -196,6 +196,8 @@ public class CameraWindow extends AltWindow {
 
         CAMERAS.set(cameraIndex, null);
 
+        worldView.destroy();
+
         if (focusCb != null) {
             focusCb.close();
             focusCb = null;

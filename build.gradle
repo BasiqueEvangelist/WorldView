@@ -40,6 +40,7 @@ dependencies {
 
 	modImplementation include("me.lucko:fabric-permissions-api:${project.fabric_perms_api}")
 
+	modCompileOnly "maven.modrinth:sodium:mc1.21.1-0.6.13-fabric"
 	modLocalRuntime "maven.modrinth:sodium:mc1.21.1-0.6.13-fabric"
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"

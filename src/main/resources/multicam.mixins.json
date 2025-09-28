@@ -3,7 +3,7 @@
     "package": "me.basiqueevangelist.multicam.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-        "CommandManagerMixin",
+        "CommandManagerMixin"
     ],
     "injectors": {
         "defaultRequire": 1
@@ -18,6 +18,8 @@
         "client.PostEffectProcessorMixin",
         "client.WindowMixin",
         "client.WorldRendererAccessor",
-        "client.WorldRendererMixin"
+        "client.WorldRendererMixin",
+        "client.sodium.RenderSectionManagerMixin",
+        "client.sodium.SodiumWorldRendererMixin"
     ]
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.VertexSorter;
 import me.basiqueevangelist.multicam.client.owocode.AnimatableProperty;
+import me.basiqueevangelist.windowapi.SupportsFeatures;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
 import me.basiqueevangelist.windowapi.util.GlUtil;
 import me.basiqueevangelist.multicam.mixin.client.CameraAccessor;
@@ -22,10 +23,13 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL32;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-public class WorldViewComponent {
+public class WorldViewComponent implements SupportsFeatures<WorldViewComponent> {
     @ApiStatus.Internal
     public static Framebuffer CURRENT_BUFFER = null;
 
@@ -235,5 +239,30 @@ public class WorldViewComponent {
 
     void whenResized(BiConsumer<Integer, Integer> onResized) {
         resizeListeners.add(onResized);
+    }
+
+    private final Map<Key<WorldViewComponent, ?>, Object> features = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T get(Key<WorldViewComponent, T> key) {
+        T value = (T) features.get(key);
+
+        if (value == null) {
+            value = key.factory().apply(this);
+            features.put(key, value);
+        }
+
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void destroy() {
+        for (var feature : features.entrySet()) {
+            ((Consumer<Object>) feature.getKey().destructor()).accept(feature.getValue());
+        }
+
+        if (this.framebuffer != null)
+            this.framebuffer.delete();
     }
 }
