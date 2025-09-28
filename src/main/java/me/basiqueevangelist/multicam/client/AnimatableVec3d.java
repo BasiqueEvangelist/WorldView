@@ -1,7 +1,6 @@
 package me.basiqueevangelist.multicam.client;
 
-import io.wispforest.owo.ui.core.Animatable;
-import io.wispforest.owo.ui.core.Insets;
+import me.basiqueevangelist.multicam.client.owocode.Animatable;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 

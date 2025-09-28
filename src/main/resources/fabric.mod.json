@@ -39,7 +39,6 @@
 		"minecraft": "~1.21.1",
 		"java": ">=17",
 		"fabric-api": "*",
-		"owo": "*",
 		"fabric-permissions-api-v0": ">=0.3.1"
 	}
 }

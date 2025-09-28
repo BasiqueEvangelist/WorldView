@@ -3,16 +3,14 @@ package me.basiqueevangelist.multicam.client;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.VertexSorter;
-import io.wispforest.owo.ui.base.BaseComponent;
-import io.wispforest.owo.ui.core.AnimatableProperty;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
-import io.wispforest.owo.ui.core.Size;
+import me.basiqueevangelist.multicam.client.owocode.AnimatableProperty;
 import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
 import me.basiqueevangelist.windowapi.util.GlUtil;
 import me.basiqueevangelist.multicam.mixin.client.CameraAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.SimpleFramebuffer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.RotationAxis;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class WorldViewComponent extends BaseComponent {
+public class WorldViewComponent {
     @ApiStatus.Internal
     public static Framebuffer CURRENT_BUFFER = null;
 
@@ -47,6 +45,9 @@ public class WorldViewComponent extends BaseComponent {
     private boolean disableEntities = false;
     private boolean disableBlockEntities = false;
     private boolean disableParticles = false;
+
+    private int width = 0;
+    private int height = 0;
 
     public Vec3d position() {
         return position.get().inner();
@@ -131,22 +132,16 @@ public class WorldViewComponent extends BaseComponent {
 
     }
 
-    @Override
-    public void update(float delta, int mouseX, int mouseY) {
-        super.update(delta, mouseX, mouseY);
-
+    public void update(float delta) {
         this.position.update(delta);
         this.yaw.update(delta);
         this.pitch.update(delta);
         this.fov.update(delta);
     }
 
-    @Override
-    public void inflate(Size space) {
+    public void resize(int width, int height) {
         if (this.framebuffer != null)
             this.framebuffer.delete();
-
-        super.inflate(space);
 
         int realWidth = (int) (CurrentWindowContext.current().scaleFactor() * width);
         int realHeight = (int) (CurrentWindowContext.current().scaleFactor() * height);
@@ -154,16 +149,12 @@ public class WorldViewComponent extends BaseComponent {
         this.framebuffer = new SimpleFramebuffer(realWidth, realHeight, true, MinecraftClient.IS_SYSTEM_MAC);
         resizeListeners.forEach(x -> x.accept(realWidth, realHeight));
         GlDebugUtils.labelObject(GL32.GL_FRAMEBUFFER, this.framebuffer.fbo, "Framebuffer for " + this);
+
+        this.width = width;
+        this.height = height;
     }
 
-    @Override
-    public void dismount(DismountReason reason) {
-        if (this.framebuffer != null)
-            this.framebuffer.delete();
-    }
-
-    @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(DrawContext context, int x, int y) {
         try (var ignored = GlDebugUtils.pushGroup("Drawing world into FB for " + this)) {
             int oldFb = GL32.glGetInteger(GL32.GL_DRAW_FRAMEBUFFER_BINDING);
 
@@ -230,7 +221,7 @@ public class WorldViewComponent extends BaseComponent {
             ResizeHacks.resize(client.gameRenderer, null);
         }
 
-        MultiCam.WORLD_VIEW_PROGRAM.use();
+        RenderSystem.setShader(() -> MultiCam.WORLD_VIEW_PROGRAM);
         RenderSystem.disableBlend();
         RenderSystem.setShaderTexture(0, framebuffer.getColorAttachment());
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();

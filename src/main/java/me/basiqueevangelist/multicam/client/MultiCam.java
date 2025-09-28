@@ -1,7 +1,6 @@
 package me.basiqueevangelist.multicam.client;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import io.wispforest.owo.shader.GlProgram;
 import me.basiqueevangelist.multicam.client.command.ConfigCameraCommand;
 import me.basiqueevangelist.multicam.client.command.MoveCameraCommand;
 import me.basiqueevangelist.multicam.client.command.OrbitCameraCommand;
@@ -11,7 +10,9 @@ import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 
@@ -19,13 +20,17 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class MultiCam implements ClientModInitializer {
-	public static final GlProgram WORLD_VIEW_PROGRAM = new GlProgram(Identifier.of("multicam", "world_view"), VertexFormats.POSITION_COLOR);
+	public static ShaderProgram WORLD_VIEW_PROGRAM = null;
 
 	public static int FPS_TARGET = 60;
 
 	@Override
 	public void onInitializeClient() {
 		ServerData.init();
+
+		CoreShaderRegistrationCallback.EVENT.register(context -> {
+			context.register(Identifier.of("multicam", "world_view"), VertexFormats.POSITION_COLOR, program -> WORLD_VIEW_PROGRAM = program);
+		});
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(

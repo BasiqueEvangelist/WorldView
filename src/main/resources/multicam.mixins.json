@@ -4,7 +4,6 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "CommandManagerMixin",
-        "client.OwoUIAdapterMixin"
     ],
     "injectors": {
         "defaultRequire": 1
@@ -15,7 +14,6 @@
         "client.KeyBindingAccessor",
         "client.LivingEntityRendererMixin",
         "client.MinecraftClientMixin",
-        "client.OwoScissorStackMixin",
         "client.PostEffectProcessorAccessor",
         "client.PostEffectProcessorMixin",
         "client.WindowMixin",

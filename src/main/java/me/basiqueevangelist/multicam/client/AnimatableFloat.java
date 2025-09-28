@@ -1,6 +1,6 @@
 package me.basiqueevangelist.multicam.client;
 
-import io.wispforest.owo.ui.core.Animatable;
+import me.basiqueevangelist.multicam.client.owocode.Animatable;
 import net.minecraft.util.math.MathHelper;
 
 public record AnimatableFloat(float inner) implements Animatable<AnimatableFloat> {

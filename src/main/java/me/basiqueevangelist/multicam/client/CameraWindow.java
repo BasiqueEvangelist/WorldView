@@ -1,12 +1,10 @@
 package me.basiqueevangelist.multicam.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import io.wispforest.owo.ui.container.Containers;
-import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.OwoUIAdapter;
-import io.wispforest.owo.ui.core.Sizing;
 import me.basiqueevangelist.multicam.mixin.client.KeyBindingAccessor;
+import me.basiqueevangelist.windowapi.AltWindow;
 import me.basiqueevangelist.windowapi.WindowIcon;
+import me.basiqueevangelist.windowapi.context.CurrentWindowContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
@@ -16,17 +14,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.NativeResource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraWindow extends OwoWindow<FlowLayout> {
+public class CameraWindow extends AltWindow {
     public final WorldViewComponent worldView = new WorldViewComponent();
 
     public static final List<CameraWindow> CAMERAS = new ArrayList<>();
-
-    public static float PREV_FRAME_DURATION = 0;
 
     private NativeResource focusCb;
     private final int cameraIndex;
@@ -65,43 +62,55 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     }
 
     @Override
-    protected OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.createWithoutScreen(0, 0, scaledWidth(), scaledHeight(), Containers::verticalFlow);
-    }
-
-    @Override
-    protected void build(FlowLayout rootComponent) {
-        rootComponent.child(worldView
-            .sizing(Sizing.fill(100), Sizing.fill(100)));
-
-        rootComponent.mouseUp().subscribe((mouseX, mouseY, button) -> {
-            if (!cursorLocked()) {
-                lockCursor();
-
-                orbitPoint = null;
-            }
-
-            return true;
-        });
-
-        rootComponent.keyPress().subscribe((keyCode, scanCode, modifiers) -> {
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE && cursorLocked()) {
-                unlockCursor();
-            }
-
-            return true;
-        });
-
-        rootComponent.mouseScroll().subscribe((mouseX, mouseY, amount) -> {
-            worldView.fov(worldView.fov() + -(float)amount * 5);
-            return true;
-        });
-
+    protected void build() {
         focusCb = GLFW.glfwSetWindowFocusCallback(handle(), (window, focused) -> {
             if (!focused) {
                 unlockCursor();
             }
         });
+
+        worldView.resize(scaledWidth(), scaledHeight());
+    }
+
+    @Override
+    protected void resize(int newWidth, int newHeight) {
+        worldView.resize(newWidth, newHeight);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (!cursorLocked()) {
+            lockCursor();
+
+            orbitPoint = null;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && cursorLocked()) {
+            unlockCursor();
+        }
+
+        return true;
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+
+    }
+
+    @Override
+    public boolean isFocused() {
+        return false;
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        worldView.fov(worldView.fov() + -(float)verticalAmount * 5);
+        return true;
     }
 
     @Override
@@ -117,6 +126,8 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
     @Override
     public void draw() {
         float prevFrameDuration = MinecraftClient.getInstance().getRenderTickCounter().getLastFrameDuration();
+
+        worldView.update(prevFrameDuration);
 
         if (cursorLocked()) {
             float multiplier = 1;
@@ -171,12 +182,12 @@ public class CameraWindow extends OwoWindow<FlowLayout> {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        float prevFrameDuration = ((float) System.nanoTime() - prevDrawNanos) / 1_000_000_000f * 20;
-
-        PREV_FRAME_DURATION = prevFrameDuration;
         RenderSystem.disableScissor();
-        super.render(context, mouseX, mouseY, prevFrameDuration);
-        PREV_FRAME_DURATION = 0;
+        GL20.glScissor(0, 0, CurrentWindowContext.current().framebufferWidth(), CurrentWindowContext.current().framebufferHeight());
+
+        worldView.draw(context, 0, 0);
+
+        RenderSystem.disableScissor();
     }
 
     @Override
